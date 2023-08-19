@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Task</title>
+    <link href="https://cdn.jsdelivr.xyz/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+</head>
+<body style="height: 100vh">
+
+<div class="container">
+<div class="row">
+    <div class="card">
+        <div class="card-body">
+            <span id="result"></span>
+            <form id="form" action="" class="row" method="post">
+                <div class="col-lg-4 col-md-4 col-sm-12">
+                    <label for="first_name" class="form-label">First Name</label>
+                    <input type="text" class="form-control" name="first_name" id="first_name">
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-12">
+                    <label for="last_name" class="form-label">Last Name</label>
+                    <input type="text" class="form-control" id="last_name" name="last_name">
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-12">
+                    <label for="user_image" class="form-label">User Image</label>
+                    <input type="file" id="image" name="image">
+                </div>
+                <div class="col-12">
+                    <button id="btnSaveSign" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.xyz/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+<script>
+    $(document).ready(function() {
+        $('#form').submit(function(e) {
+            e.preventDefault();
+            var firstName = $('#first_name').val();
+            var lastName = $('#last_name').val();
+            var fileInput = document.getElementById("image");
+            var file = fileInput.files[0];
+            // Validate the inputs
+            if (firstName.trim() === '') {
+                alert('Please enter a first name');
+                // return;
+            }
+            if (lastName.trim() === '') {
+                alert('Please enter a last name');
+                // return;
+            }
+            if (!file) {
+                alert('Please select an image');
+                // return;
+            }
+            var formData = new FormData();
+            formData.append("firstName", firstName);
+            formData.append("lastName", lastName);
+            formData.append("image", file);
+            // Check if the selected file is an image
+            var imageType = file.type.split('/')[0];
+            if (imageType !== 'image') {
+                alert('Please select a valid image file');
+                return;
+            }
+            // Send the AJAX request
+            console.log(formData)
+            $.ajax({
+                url: 'controller/save_sign.php',
+                type: 'POST',
+                data: formData,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function(response) {
+                    if (response['status'] == true) {
+                        $('#form')[0].reset();
+                        $('#result').html('<div class="alert alert-success" role="alert">Thanks For Registration</div>');
+                    } else if (response['status'] == 0) {
+                        $('#result').html('<div class="alert alert-success" role="alert">There are some error</div>');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    $('#result').html('<div class="alert alert-success" role="alert">Error occurred while uploading image: ' + error + '</div>');
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>
