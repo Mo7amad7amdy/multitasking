@@ -30,4 +30,3 @@ if(!$link || mysqli_connect_errno()){
     $result['file_name'] = $file_name;
     return $result;
 }
-
